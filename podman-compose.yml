@@ -1,0 +1,42 @@
+version: "3.3"
+
+services:
+  # ---------------------------
+  # NGINX
+  # ---------------------------
+  web:
+    container_name: nginx
+    image: docker.io/nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./proyectos:/var/www/html
+      - ./nginx.php-fpm.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - php-fpm
+
+  # ---------------------------
+  # PHP-FPM
+  # ---------------------------
+  php-fpm:
+    container_name: php
+    build: .
+    volumes:
+      - ./proyectos:/var/www/html
+
+  # ---------------------------
+  # MARIADB
+  # ---------------------------
+  db:
+    container_name: mariadb
+    image: docker.io/mariadb:latest
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: toor
+      MARIADB_DATABASE: gestion_incidencias
+      MARIADB_USER: usuario
+      MARIADB_PASSWORD: usuario
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mariadb:/var/lib/mysql
